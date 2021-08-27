@@ -1,10 +1,10 @@
-# Django
+# django
 Django==3.2.6
 asgiref==3.4.1
 pytz==2021.1
 sqlparse==0.4.1
 
-# Django REST FrameWork
+# django REST frameWork
 djangorestframework==3.12.4
 
 # Markdown
@@ -16,3 +16,11 @@ charset-normalizer==2.0.4
 idna==3.2
 requests==2.26.0
 urllib3==1.26.6
+
+# ptpython
+ptpython==3.0.19
+appdirs==1.4.4
+jedi==0.18.0
+prompt-toolkit==3.0.20
+Pygments==2.10.0
+wcwidth==0.2.5
