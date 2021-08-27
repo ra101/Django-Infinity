@@ -13,9 +13,10 @@ import os
 from sys import path
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 path.append(PROJECT_ROOT)
+
+BASE_DIR = os.path.dirname(PROJECT_ROOT)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -40,15 +41,15 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-EXTENSION_APPS = [
+THIRD_PARTY_APPS = [
 
 ]
 
 LOCAL_APPS = [
-    "apps.hello_world.apps.HelloWorldConfig",
+    "apps.base.apps.BaseConfig",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + EXTENSION_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [

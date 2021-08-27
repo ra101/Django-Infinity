@@ -3,3 +3,16 @@ Django==3.2.6
 asgiref==3.4.1
 pytz==2021.1
 sqlparse==0.4.1
+
+# Django REST FrameWork
+djangorestframework==3.12.4
+
+# Markdown
+Markdown==3.3.4
+
+# Miscellaneous
+certifi==2021.5.30
+charset-normalizer==2.0.4
+idna==3.2
+requests==2.26.0
+urllib3==1.26.6
