@@ -1,8 +1,9 @@
 import requests
 
+from markdown import markdown
 from django.http import HttpResponse, HttpResponseServerError
 
-from markdown import markdown
+from .constants import Readme
 
 
 def hello_world(*args, **kwargs):
@@ -10,9 +11,7 @@ def hello_world(*args, **kwargs):
 
 def readme(*args, **kwargs):
     try:
-        response = requests.get(
-            "https://raw.githubusercontent.com/ra101/Django-Infinity/core/README.md"
-        )
+        response = requests.get(Readme.URL)
         return HttpResponse(markdown(response.text))
     except Exception:
         return HttpResponseServerError()

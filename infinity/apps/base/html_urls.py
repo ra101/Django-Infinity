@@ -4,6 +4,6 @@ from .views import hello_world, readme
 
 
 urlpatterns = [
-    path("home.html", hello_world, name="base"),
-    path("", readme, name="base"),
+    path("home.html", hello_world, name="home"),
+    path("", readme, name="readme"),
 ]
