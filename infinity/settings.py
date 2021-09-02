@@ -3,8 +3,10 @@ from sys import path
 
 from configurations import Configuration
 
+from .constance import LiveSettingsMixin
 
-class Settings(Configuration):
+
+class Settings(LiveSettingsMixin, Configuration):
     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
     path.append(PROJECT_ROOT)
 
@@ -36,6 +38,7 @@ class Settings(Configuration):
     EXTENSION_APPS = [
         "rest_framework",
         "drf_yasg",
+        "constance",
     ]
 
     LOCAL_APPS = [

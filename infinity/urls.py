@@ -9,7 +9,7 @@ from .constants import ProjectDetails
 
 
 json_urls = [
-    # path("", include("apps.base.json_urls"), name="base-json"),
+    path("", include("apps.base.json_urls"), name="base-json"),
 ]
 
 html_urls = [

@@ -1,9 +1,9 @@
 from django.urls import path
 
-from .views import hello_world, readme
+from .views import hello_world_view, readme_view
 
 
 urlpatterns = [
-    path("home.html", hello_world, name="home"),
-    path("", readme, name="readme"),
+    path("home.html", hello_world_view, name="home"),
+    path("", readme_view, name="readme"),
 ]
