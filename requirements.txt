@@ -43,3 +43,7 @@ uritemplate==3.0.1
 # WhiteNoise
 whitenoise==5.3.0
 Brotli==1.0.9
+
+# django-configurations (class based settings)
+django-configurations==2.2
+six==1.16.0
