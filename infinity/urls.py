@@ -29,7 +29,6 @@ schema_view = get_schema_view(
         license=openapi.License(
             name=ProjectDetails.LICENSE_TYPE, url=ProjectDetails.LICENSE_URL
         ),
-        patterns=json_urls,
     ),
     public=ProjectDetails.IS_PUBLIC,
     permission_classes=(permissions.AllowAny,),
@@ -37,7 +36,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include(html_urls)),
     path("", include(json_urls)),
     url(
         r"^swagger(?P<format>\.json|\.yaml)$",
@@ -52,4 +50,6 @@ urlpatterns = [
     url(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
+    # add html url after swagger so, swagger doesn't try to render it
+    path("", include(html_urls)),
 ]
