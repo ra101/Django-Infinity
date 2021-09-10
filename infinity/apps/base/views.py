@@ -12,6 +12,7 @@ from .constants import Readme
 
 
 def hello_world_view(request):
+    # for pinger, https://github.com/ra101/pinger
     return HttpResponse("Hello World")
 
 def readme_view(request):
@@ -23,6 +24,7 @@ def readme_view(request):
         return HttpResponseServerError()
     except Exception:
         return HttpResponseServerError()
+
 
 @api_view(http_method_names=["GET"])
 def live_view(request, live_url_endpoint):
