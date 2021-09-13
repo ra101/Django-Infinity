@@ -51,4 +51,6 @@ six==1.16.0
 # Constance - Dynamic Django settings
 django-constance==2.8.0
 
-# redis-3.5.3
+# dotENV
+django-dotenv==1.4.2
+

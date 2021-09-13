@@ -16,7 +16,7 @@ class Settings(LiveSettingsMixin, Configuration):
     # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = "django-insecure-ig78b7gll!99blz%d12v-(hbjwktpvk6o@no655e8$#zyaluy2"
+    SECRET_KEY = os.environ.get("SECRET_KEY", '')
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
