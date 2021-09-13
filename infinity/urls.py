@@ -10,6 +10,7 @@ from .constants import ProjectDetails
 
 json_urls = [
     path("", include("apps.base.json_urls"), name="base-json"),
+    path("", include("apps.redis_db_app.urls")),
 ]
 
 html_urls = [

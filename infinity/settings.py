@@ -43,6 +43,7 @@ class Settings(LiveSettingsMixin, Configuration):
 
     LOCAL_APPS = [
         "apps.base.apps.BaseConfig",
+        "apps.redis_db_app.apps.RedisDBAppConfig",
     ]
 
     INSTALLED_APPS = (
