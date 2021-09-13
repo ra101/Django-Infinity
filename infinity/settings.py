@@ -79,6 +79,25 @@ class Settings(LiveSettingsMixin, Configuration):
         },
     ]
 
+    # Redis Setup
+    REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
+    REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
+    REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', '')
+
+    # Required by Healthcheck URL
+    REDIS_URL = property(lambda self: f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}')
+
+    CACHES = {
+        'default': {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PASSWORD": f"{REDIS_PASSWORD}"
+            },
+        }
+    }
+
     WSGI_APPLICATION = "infinity.wsgi.application"
 
     # Database

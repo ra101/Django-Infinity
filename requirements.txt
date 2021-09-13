@@ -54,3 +54,6 @@ django-constance==2.8.0
 # dotENV
 django-dotenv==1.4.2
 
+# Redis
+redis==3.5.3
+django-redis-5.0.0
