@@ -1,53 +1,64 @@
-from django.http import Http404
-from rest_framework.response import Response
+from django.http.response import Http404
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
 from .models import RedisAbstractModel
-from .serializers import RedisBulkSerializer, RedisInstanceSerializers
+from .serializers import RedisInstanceSerializers, RedisBulkUpsertSerializer
 
 
 class RedisDBAppViewSet(ModelViewSet):
+    """
+    View for Redis DB App
+    """
+
     serializer_class = RedisInstanceSerializers
-    queryset = RedisAbstractModel.objects.all()
-    lookup_field = 'key'
-    serializer_map = {
-        'list': RedisBulkSerializer,
-        'create': RedisBulkSerializer
-    }
+    queryset = RedisAbstractModel.objects.filter(key="api_*")
+    lookup_field = "key"
+    serializer_map = {"create": RedisBulkUpsertSerializer}
+
+    def get_object(self):
+        """
+        Resolving key and using custom Manager to return obj
+        """
+
+        # resolve each key
+        key = self.kwargs["key"]
+        if not key.startswith("api_"):
+            self.kwargs["key"] = f"api_{key}"
+
+        try:
+            obj = RedisAbstractModel.objects.get(key=key)
+        except Exception:
+            raise Http404
+
+        return obj
 
     def get_serializer_class(self):
         """
-        BulkSerializer for listing and creating,
+        BulkSerializer for creating/updating,
         rest uses InstanceSerializers
         """
         return self.serializer_map.get(self.action, self.serializer_class)
 
-    def get_object(self):
-        """
-        Overriding `get_object` (check if key exists in redis db)
-        for GET/UPDATE/DELETE (redis-db-app-details)
-        """
-        key = RedisInstanceSerializers._resolve_key(
-            self.kwargs[self.lookup_field]
-        )
-        if not RedisInstanceSerializers.is_key_valid(key):
-            raise Http404
-        return RedisAbstractModel(key=key)
-
     def list(self, request, *args, **kwargs):
         """
-        Overriding `list` (use redis search regex func)
-        for GET (redis-db-app-list)
+        Parse List of dicts to a single big dict
         """
-        serializer = self.get_serializer()
-        return Response(serializer.get_bulk_data())
 
-    def perform_destroy(self, instance):
+        ret = super().list(request, *args, **kwargs)
+
+        # [{}, {}, ...] -> {...}
+        if ret.data:
+            data = {}
+            for single_dict in ret.data:
+                data.update(single_dict)
+            ret.data = data
+        return ret
+
+    def perform_update(self, serializer):
         """
-        Overriding `perform_destroy` (delete via serializers)
-        for DELETE (redis-db-app-details)
+        Override this function to call serializer.save with arg
         """
-        key = RedisInstanceSerializers._resolve_key(
-            instance.key
-        )
-        RedisInstanceSerializers.delete(key)
+        if not self.request.data.get("value"):
+            raise ValidationError("`value` is a required field")
+        serializer.save(self.request.data["value"])
