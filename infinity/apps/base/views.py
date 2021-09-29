@@ -15,10 +15,10 @@ def hello_world_view(request):
     # for pinger, https://github.com/ra101/pinger
     return HttpResponse("Hello World")
 
+
 def readme_view(request):
     try:
         response = requests.get(Readme.URL)
-        print(response.status_code)
         if 200 <= response.status_code < 300:
             return HttpResponse(markdown(response.text))
         return HttpResponseServerError()
@@ -43,7 +43,7 @@ def live_view(request, live_url_endpoint):
     # If its is unnecessary, then Why?
     # Because I can :p
     LiveSerializer = type(
-        "LiveSerializer", (Serializer, ), {live_settings.LIVE_KEY: CharField()}
+        "LiveSerializer", (Serializer,), {live_settings.LIVE_KEY: CharField()}
     )
 
     serializer = LiveSerializer(data={live_settings.LIVE_KEY: live_settings.LIVE_VALUE})
