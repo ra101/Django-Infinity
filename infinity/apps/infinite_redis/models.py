@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.redis_db_app.manager import RedisModelManager
+from apps.infinite_redis.manager import RedisModelManager
 
 
 class RedisAbstractModel(models.Model):
@@ -11,6 +11,7 @@ class RedisAbstractModel(models.Model):
     key = models.BinaryField(max_length=255)
     value = models.BinaryField(max_length=255)
 
+    # Override `objects` to add custom manager class
     objects = RedisModelManager()
 
     class Meta:

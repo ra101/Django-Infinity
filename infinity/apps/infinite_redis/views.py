@@ -6,9 +6,9 @@ from .models import RedisAbstractModel
 from .serializers import RedisInstanceSerializers, RedisBulkUpsertSerializer
 
 
-class RedisDBAppViewSet(ModelViewSet):
+class InfiniteRedisViewSet(ModelViewSet):
     """
-    View for Redis DB App
+    View for Infinite Redis
     """
 
     serializer_class = RedisInstanceSerializers

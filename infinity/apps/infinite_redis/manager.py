@@ -2,7 +2,7 @@ import redis
 from django.conf import settings
 from django.db.models.manager import BaseManager
 
-from apps.redis_db_app.query import RedisQuerySet
+from apps.infinite_redis.query import RedisQuerySet
 
 
 # Redis DB

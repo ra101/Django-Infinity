@@ -16,7 +16,7 @@ class Settings(LiveSettingsMixin, Configuration):
     # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = os.environ.get("SECRET_KEY", '')
+    SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
@@ -43,7 +43,7 @@ class Settings(LiveSettingsMixin, Configuration):
 
     LOCAL_APPS = [
         "apps.base.apps.BaseConfig",
-        "apps.redis_db_app.apps.RedisDBAppConfig",
+        "apps.infinite_redis.apps.InfiniteRedisConfig",
     ]
 
     INSTALLED_APPS = (
@@ -81,20 +81,20 @@ class Settings(LiveSettingsMixin, Configuration):
     ]
 
     # Redis Setup
-    REDIS_HOST = os.environ.get('REDIS_HOST', '127.0.0.1')
-    REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
-    REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', '')
+    REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
+    REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
+    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", "")
 
     # Required by Healthcheck URL
-    REDIS_URL = property(lambda self: f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}')
+    REDIS_URL = property(lambda self: f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}")
 
     CACHES = {
-        'default': {
+        "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "PASSWORD": f"{REDIS_PASSWORD}"
+                "PASSWORD": f"{REDIS_PASSWORD}",
             },
         }
     }
