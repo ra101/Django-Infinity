@@ -8,7 +8,7 @@ class ProjectDetails(ConstantClass):
     DESCRIPTION = "A Big Project of Django with All its Infinite Extensions"
 
     AUTHOR_NAME = "〈 RA 〉"
-    AUTHOR_EMAIL = "dev.ra.101@protonmail.com"
+    AUTHOR_EMAIL = "ra101.dev@protonmail.com"
     AUTHOR_WEB = "https://ra101.github.io"
 
     LICENSE_TYPE = "MIT License"
