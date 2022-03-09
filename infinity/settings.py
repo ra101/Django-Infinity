@@ -1,6 +1,7 @@
 import os
 from sys import path
 
+from decouple import config
 from configurations import Configuration
 
 from .constance import LiveSettingsMixin
@@ -16,10 +17,10 @@ class Settings(LiveSettingsMixin, Configuration):
     # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = os.environ.get("SECRET_KEY", "")
+    SECRET_KEY = config("SECRET_KEY")
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
+    DEBUG = config("DEBUG", default=True, cast=bool)
 
     ALLOWED_HOSTS = ["*"]
 
@@ -81,9 +82,9 @@ class Settings(LiveSettingsMixin, Configuration):
     ]
 
     # Redis Setup
-    REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
-    REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
-    REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", "")
+    REDIS_HOST = config("REDIS_HOST", default="localhost")
+    REDIS_PORT = config("REDIS_PORT", default=6379, cast=int)
+    REDIS_PASSWORD = config("REDIS_PASSWORD")
 
     # Required by Healthcheck URL
     REDIS_URL = property(lambda self: f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}")
@@ -103,11 +104,14 @@ class Settings(LiveSettingsMixin, Configuration):
 
     # Database
     # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": f"{BASE_DIR}/db.sqlite3",
+            "ENGINE": "timescale.db.backends.postgis",
+            "NAME": config("PSQL_NAME", default="postgres"),
+            "USER": config("PSQL_USER", default="postgres"),
+            "PASSWORD": config("PSQL_PASS"),
+            "HOST": config("PSQL_HOST", default="localhost"),
+            "PORT": config("PQSL_PORT", default=5432),
         }
     }
 
