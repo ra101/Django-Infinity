@@ -150,19 +150,18 @@ class Settings(LiveSettingsMixin, Configuration):
     # http://whitenoise.evans.io/en/stable/
 
     STATIC_URL = "/static/"
-    STATIC_ROOT = f"{BASE_DIR}/staticfiles/"
+    STATIC_ROOT = f"{BASE_DIR}/infinity/static/"
+
     # Multi deploy platform support
     OTHER_STATIC_ROOTS = [
-        f"{PROJECT_ROOT}/staticfiles/",
-        f"infinity/{BASE_DIR}/staticfiles/",
+        f"{PROJECT_ROOT}/static/",
+        f"infinity/{BASE_DIR}/static/",
     ]
     STATICFILES_STORAGE = "libs.staticfiles.storage.ExtendedWhiteNoiseStorage"
     WHITENOISE_MANIFEST_STRICT = False
 
     # Default primary key field type
     # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
-    DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
     # Default appending of `/` in URLs
     # https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-APPEND_SLASH
