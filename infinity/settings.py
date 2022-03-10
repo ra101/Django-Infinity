@@ -4,6 +4,7 @@ from sys import path
 from decouple import config
 from configurations import Configuration
 
+from infinity import __version__
 from .constance import LiveSettingsMixin
 
 
@@ -21,6 +22,8 @@ class Settings(LiveSettingsMixin, Configuration):
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = config("DEBUG", default=True, cast=bool)
+
+    PROJECT_VERSION = __version__
 
     ALLOWED_HOSTS = ["*"]
 

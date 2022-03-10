@@ -2,6 +2,7 @@ import requests
 
 from markdown import markdown
 from constance import config as live_settings
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseServerError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -24,6 +25,14 @@ def readme_view(request):
         return HttpResponseServerError()
     except Exception:
         return HttpResponseServerError()
+
+
+@api_view(http_method_names=["GET"])
+def version_view(request):
+    """
+    Displays the current version of deployed django project
+    """
+    return Response({"version": settings.PROJECT_VERSION})
 
 
 @api_view(http_method_names=["GET"])
