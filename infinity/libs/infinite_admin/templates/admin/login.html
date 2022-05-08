@@ -1,0 +1,83 @@
+{% extends "admin/login.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "infinite_admin/css/login.css" %}" />
+    <script src="{% static "infinite_admin/js/login.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content-nav">
+        {% if request.path_info == "/infinite_admin/login/" %}
+                <a href="/admin" title="HoneyPot Admin">🍯 Admin</a>
+            {% elif request.path_info == "/admin/login/" %}
+                <a href="/infinite_admin" title="Infinite Admin">♾️ Admin</a>
+        {% endif %}
+        <a href="/">🌐Website</a>
+        <a href="/swagger">📖Swagger</a>
+    </div>
+
+    <div class="content-extra">
+        {% if request.path_info == "/infinite_admin/login/" %}
+                <p>Login with <b>admin/admin</b> Guest Credentials!</p>
+            {% elif request.path_info == "/admin/login/" %}
+                <p style="color:gold;"><b>This is Honeypot Admin, No Credentials would work!</b></p>
+        {% endif %}
+    </div>
+    <hr/><br>
+
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            {% if form.errors.items|length == 1 %}
+                {% trans "Please correct the error below." %}
+            {% else %}
+                {% trans "Please correct the errors below." %}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <div id="content-main">
+        {% if user.is_authenticated %}
+        <p class="errornote">
+            {% blocktrans trimmed %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+            {% endblocktrans %}
+        </p>
+        {% endif %}
+        <form action="{{ app_path }}" method="post" id="login-form">
+            {% csrf_token %}
+            <div class="form-row">
+                {{ form.username.errors }}
+                {{ form.username.label_tag }} {{ form.username }}
+            </div>
+            <div class="form-row">
+                {{ form.password.errors }}
+                {{ form.password.label_tag }} {{ form.password }}
+                <input type="hidden" name="next" value="{{ next }}"/>
+            </div>
+            <div class="form-row">
+                {{ form.captcha.label_tag }}
+                <div class="captcha-input" captcha-refresh-url="{% url "captcha-refresh" %}">
+                {{ form.captcha }}
+            </div>
+            {% if form.captcha.errors %}{{ form.captcha.errors }}{% endif %}
+    </div>
+    <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}"/>
+    </div>
+    </form>
+    </div>
+
+    <a class="sponser" target="_blank" href="https://www.buymeacoffee.com/ra101">Sponser</a>
+
+
+{% endblock %}
