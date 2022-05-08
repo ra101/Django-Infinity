@@ -4,6 +4,10 @@ from django.db.models import Q
 from django.db.transaction import atomic
 from django.contrib.auth import models
 from django.core.management.base import BaseCommand
+from django.db.models.signals import pre_save
+
+from libs.utils import disable_signals
+from apps.base.signals import immutalize_model
 
 
 class Command(BaseCommand):
@@ -17,11 +21,18 @@ class Command(BaseCommand):
         - GuestUser: user/pass :: admin/admin
         """
 
-        self.tuncate_auth_models()
+        with disable_signals(self.get_signal_dict()):
 
-        self.create_super_user()
+            self.tuncate_auth_models()
 
-        self.create_guest_user()
+            self.create_super_user()
+
+            self.create_guest_user()
+
+    def get_signal_dict(self):
+        return {
+            pre_save: {immutalize_model: [models.User, models.Group, models.Permission]}
+        }
 
     def tuncate_auth_models(self):
         """
