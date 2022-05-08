@@ -1,6 +1,7 @@
 from django.http.response import Http404
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.renderers import JSONRenderer
 
 from .models import RedisAbstractModel
 from .serializers import RedisInstanceSerializers, RedisBulkUpsertSerializer
@@ -15,6 +16,7 @@ class InfiniteRedisViewSet(ModelViewSet):
     queryset = RedisAbstractModel.objects.filter(key="api_*")
     lookup_field = "key"
     serializer_map = {"create": RedisBulkUpsertSerializer}
+    pagination_class, renderer_classes = None, [JSONRenderer]
 
     def get_object(self):
         """

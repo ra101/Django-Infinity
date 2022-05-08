@@ -6,12 +6,7 @@ from apps.infinite_redis.query import RedisQuerySet
 
 
 # Redis DB
-redis_ins = redis.StrictRedis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=0,
-    password=settings.REDIS_PASSWORD,
-)
+redis_ins = redis.from_url(settings.REDIS_URL)
 
 
 class RedisModelManager(BaseManager.from_queryset(RedisQuerySet)):
