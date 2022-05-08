@@ -1,4 +1,4 @@
-from .constants import LiveDemoInitialConfig
+from ...constants import LiveDemoInitialConfig
 
 
 class LiveSettingsMixin:

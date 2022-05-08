@@ -1,0 +1,4 @@
+-r essentials.txt
+
+# Daphne
+daphne==3.0.2
