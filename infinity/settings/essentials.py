@@ -45,6 +45,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     EXTENSION_APPS = [
         "rest_framework",
         "constance",
+        "constance.backends.database",
         "channels",
         "graphene_django",
         "rest_framework_simplejwt",
