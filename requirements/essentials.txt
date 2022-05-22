@@ -52,14 +52,19 @@ psycopg2-binary==2.9.3 # PostgreSQL
 django-timescaledb==0.2.11 # Timescale DB
 
 # Celery[redis]
-amqp==5.0.6
+celery==5.2.6 #
+django_celery_beat==2.2.1
+django-celery-results==2.3.1
+amqp==5.1.1
 billiard==3.6.4.0
-celery==5.2.0
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
-kombu==5.2.1
+click==8.1.3
+kombu==5.2.4
 vine==5.0.0
+django-timezone-field==4.2.3
+python-crontab==2.6.0
 
 # Django Channels (channels_redis[cryptography])
 Automat==20.2.0

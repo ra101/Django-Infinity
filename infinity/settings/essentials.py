@@ -5,7 +5,7 @@ from decouple import config
 from configurations import Configuration
 from pendulum import duration
 
-from infinity import __version__
+from infinity.__version__ import __version__
 from infinity.libs.utils import parse_db_url
 from .mixins.constance import LiveSettingsMixin
 from .mixins.celery import CelerySettingsMixin
@@ -46,6 +46,8 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
         "rest_framework",
         "constance",
         "constance.backends.database",
+        "django_celery_beat",
+        "django_celery_results",
         "channels",
         "graphene_django",
         "rest_framework_simplejwt",
@@ -164,6 +166,8 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     }
 
     CHANNEL_LAYERS = {"default": {"CONFIG": {"hosts": [REDIS_URL]}}}
+
+    CELERY_BROKER_URL = REDIS_URL
 
     GDAL_LIBRARY_PATH = config("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = config("GEOS_LIBRARY_PATH")
