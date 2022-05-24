@@ -1,6 +1,5 @@
 {% extends "admin/login.html" %}
 {% load i18n static %}
-
 {% block extrastyle %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static "infinite_admin/css/login.css" %}" />
@@ -10,19 +9,19 @@
 {% block content %}
 
     <div class="content-nav">
-        {% if request.path_info == "/infinite_admin/login/" %}
+        {% if "admin" == request.resolver_match.namespace %}
                 <a href="/admin" title="HoneyPot Admin">🍯 Admin</a>
-            {% elif request.path_info == "/admin/login/" %}
-                <a href="/infinite_admin" title="Infinite Admin">♾️ Admin</a>
+            {% elif "admin_honeypot" == request.resolver_match.namespace %}
+                <a href="{% url 'admin:login' %}" title="Infinite Admin">♾️ Admin </a>
         {% endif %}
-        <a href="/">🌐Website</a>
-        <a href="/swagger">📖Swagger</a>
+        <a href="{% url 'readme' %}">🌐Website</a>
+        <a href="{% url 'schema-swagger-ui' %}">📖Swagger</a>
     </div>
 
     <div class="content-extra">
-        {% if request.path_info == "/infinite_admin/login/" %}
+        {% if "admin" == request.resolver_match.namespace %}
                 <p>Login with <b>admin/admin</b> Guest Credentials!</p>
-            {% elif request.path_info == "/admin/login/" %}
+            {% elif "admin_honeypot" == request.resolver_match.namespace %}
                 <p style="color:gold;"><b>This is Honeypot Admin, No Credentials would work!</b></p>
         {% endif %}
     </div>
