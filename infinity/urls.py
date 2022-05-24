@@ -4,6 +4,7 @@ from django.urls import include, path
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from rest_framework_simplejwt import views as jwt_views
 
 from .constants import ProjectDetails
 
@@ -36,7 +37,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("", include(json_urls)),
     url(
         r"^swagger(?P<format>\.json|\.yaml)$",
@@ -51,6 +51,14 @@ urlpatterns = [
     url(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
-    # add html url after swagger so, swagger doesn't try to render it
+    # add html and socket url after swagger so, swagger doesn't try to render it
+    path(f"infinite_admin/", admin.site.urls),
+    path("jwt_token/", jwt_views.token_obtain_pair, name="token-obtain-pair"),
+    path("jwt_token/refresh/", jwt_views.token_refresh, name="token-refresh"),
+    path("jwt_token/verify/", jwt_views.token_verify, name="token-verify"),
     path("", include(html_urls)),
+    path("", include(socket_urls)),
+    path("admin/", include("admin_honeypot.urls")),
+    path("captcha/", include("captcha.urls")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
