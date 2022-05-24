@@ -18,6 +18,8 @@ html_urls = [
     path("", include("apps.base.html_urls"), name="base-html"),
 ]
 
+socket_urls = []
+
 schema_view = get_schema_view(
     openapi.Info(
         title=ProjectDetails.TITLE,
