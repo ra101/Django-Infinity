@@ -28,6 +28,5 @@ class LiveSettingsMixin:
     }
 
     CONSTANCE_CONFIG_FIELDSETS = {
-        "Response": {"fields": ("LIVE_KEY", "LIVE_VALUE"), "collapse": True},
-        "URL": ("LIVE_URL_ENDPOINT",),
+        "Live Settings Demo": ("LIVE_KEY", "LIVE_VALUE", "LIVE_URL_ENDPOINT"),
     }

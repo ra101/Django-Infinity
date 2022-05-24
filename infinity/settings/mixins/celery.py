@@ -5,6 +5,12 @@ class CelerySettingsMixin:
 
     CELERY_TIMEZONE = "UTC"
 
+    # CELERY_BEAT_SCHEDULE = {
+    #     "update_admin_secret": {
+    #         "task": "libs.infinite_admin.tasks.update_admin_secret",
+    #         "schedule": crontab(hour=4),
+    #     }
+    # }
 
     CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
