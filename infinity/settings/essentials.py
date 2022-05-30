@@ -27,6 +27,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # pre-processing Apps
     PRE_PROCESSING_APPS = [
         "whitenoise.runserver_nostatic",
+        "adminactions",
         "libs.infinite_admin",
     ]
 

@@ -13,6 +13,7 @@ class InfiniteAdminLoginConfig(AppConfig):
         from django.contrib import admin
         from django.contrib.admin.forms import AdminAuthenticationForm
 
+        from adminactions import actions
         from captcha.fields import CaptchaField
         from django_secure_password_input.fields import DjangoSecurePasswordInput
 
@@ -25,3 +26,6 @@ class InfiniteAdminLoginConfig(AppConfig):
         admin.site.site_title = _("Django Infinity")
         admin.site.site_header = _("Infinite Admin")
         admin.site.index_title = _("Admin")
+
+        # register all adminactions
+        actions.add_to_site(admin.site)

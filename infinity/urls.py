@@ -54,13 +54,14 @@ urlpatterns = [
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
     # add html and socket url after swagger so, swagger doesn't try to render it
-    path(f"infinite_admin/", admin.site.urls),
+    path("infinite_admin/", admin.site.urls),
     path("jwt_token/", jwt_views.token_obtain_pair, name="token-obtain-pair"),
     path("jwt_token/refresh/", jwt_views.token_refresh, name="token-refresh"),
     path("jwt_token/verify/", jwt_views.token_verify, name="token-verify"),
     path("", include(html_urls)),
     path("", include(socket_urls)),
     path("admin/", include("admin_honeypot.urls")),
+    path("adminactions/", include('adminactions.urls')),
     path("captcha/", include("captcha.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
