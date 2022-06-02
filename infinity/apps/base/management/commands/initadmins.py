@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from django.db.models.signals import pre_save
 
 from libs.utils import disable_signals
-from apps.base.signals import immutalize_model
+from apps.base.signals import immutablize_model
 
 
 class Command(BaseCommand):
@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
     def get_signal_dict(self):
         return {
-            pre_save: {immutalize_model: [models.User, models.Group, models.Permission]}
+            pre_save: {immutablize_model: [models.User, models.Group, models.Permission]}
         }
 
     def tuncate_auth_models(self):

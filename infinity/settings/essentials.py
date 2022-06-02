@@ -24,8 +24,14 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     ALLOWED_HOSTS = ["*"]
 
+    ASGI_APPLICATION = "infinity.asgi.application"
+
+    HAS_MULTI_TYPE_TENANTS = True
+    MULTI_TYPE_DATABASE_FIELD = 'schema_name'
+
     # pre-processing Apps
     PRE_PROCESSING_APPS = [
+        "django_tenants",
         "whitenoise.runserver_nostatic",
         "adminactions",
         "libs.infinite_admin",
@@ -61,28 +67,66 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     ]
 
     LOCAL_APPS = [
-        "apps.base.apps.BaseConfig",
-        "apps.infinite_redis.apps.InfiniteRedisConfig",
-        "apps.infinite_psql.apps.InfinitePSQLConfig",
+        "apps.base",
+        "apps.infinite_redis",
+        "apps.infinite_psql",
     ]
 
-    INSTALLED_APPS = PRE_PROCESSING_APPS + DJANGO_APPS + EXTENSION_APPS + LOCAL_APPS
+    TENANT1_APPS, TENANT2_APPS = ["apps.tenants.tenant1"], ["apps.tenants.tenant2"]
+
+    SHARED_APPS = PRE_PROCESSING_APPS + DJANGO_APPS + EXTENSION_APPS + LOCAL_APPS
+
+    TENANT_TYPES = {
+        "public": {"APPS": SHARED_APPS, "URLCONF": "infinity.urls"},
+        "tenant1": {"APPS": TENANT1_APPS, "URLCONF": "infinity.urls"},
+        "tenant2": {"APPS": TENANT2_APPS, "URLCONF": "infinity.urls"},
+    }
+
+    INSTALLED_APPS = SHARED_APPS + TENANT1_APPS + TENANT2_APPS
+
 
     MIDDLEWARE = [
+
+        # Tenant Middleware is above all, so that each request
+        # can be set to use the correct schema.
+        "django_tenants.middleware.main.TenantMainMiddleware",
+
+        # Security for request/response cycle.
         "django.middleware.security.SecurityMiddleware",
-        # WhiteNoise Middleware above all else other than security
+
+        # WhiteNoise Middleware is above all other than security, so that
+        # each request will associated the required template.
         "libs.staticfiles.middleware.ExtendedWhiteNoiseMiddleware",
+
+        # Enables session support (add `session` attribute in <request>).
         "django.contrib.sessions.middleware.SessionMiddleware",
+
+        # Adds utilities for taking care of basic operations.
         "django.middleware.common.CommonMiddleware",
+
+        # Adds protection against CSRF by adding hidden form fields
+        # to POST forms and checking requests for the correct value.
         "django.middleware.csrf.CsrfViewMiddleware",
+
+        # Adds Debug Toolbar on response for requests mades and
+        # It is above auth middleware, for bypassing authentication.
         "debug_toolbar.middleware.DebugToolbarMiddleware",
+
+        # Enables user support (add `user` attribute in <request>).
         "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+        # Records Failed login attempts for blacklisting.
         "defender.middleware.FailedLoginMiddleware",
+
+        # Enables cookie- and session-based message support.
         "django.contrib.messages.middleware.MessageMiddleware",
+
+        # Simple clickjacking protection via the X-Frame-Options header.
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
     ]
 
     ROOT_URLCONF = "infinity.urls"
+    PUBLIC_SCHEMA_URLCONF = 'infinity.urls'
 
     TEMPLATES = [
         {
@@ -139,23 +183,27 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
             + f":{config('REDIS_PORT', cast=int, default=6379)}"
         )
 
+    CELERY_BROKER_URL = REDIS_URL
+
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+            'KEY_FUNCTION': 'django_tenants.cache.make_key',
+            'REVERSE_KEY_FUNCTION': 'django_tenants.cache.reverse_key',
         }
     }
 
-    ASGI_APPLICATION = "infinity.asgi.application"
+    CHANNEL_LAYERS = {"default": {"CONFIG": {"hosts": [REDIS_URL]}}}
 
+    # PostgreSQL Setup
     PSQL_DEFAULT = "postgres"
 
-    # Database
     DATABASES = {
         "default": config(
             "PSQL_URL",
-            cast=parse_db_url("timescale.db.backends.postgis"),
+            cast=parse_db_url("django_tenants.postgresql_backend"),
             default=(
                 f"postgres://{config('PSQL_USER', default=PSQL_DEFAULT)}"
                 + f":{config('PSQL_PASS')}"
@@ -166,9 +214,15 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
         )
     }
 
-    CHANNEL_LAYERS = {"default": {"CONFIG": {"hosts": [REDIS_URL]}}}
+    # `django_tenants.postgresql_backend` is inherited by `ORIGINAL_BACKEND`
+    ORIGINAL_BACKEND = "timescale.db.backends.postgis"
 
-    CELERY_BROKER_URL = REDIS_URL
+    DATABASE_ROUTERS = [
+        'django_tenants.routers.TenantSyncRouter',
+    ]
+
+    TENANT_MODEL = "base.Tenant"
+    TENANT_DOMAIN_MODEL = "base.Domain"
 
     GDAL_LIBRARY_PATH = config("GDAL_LIBRARY_PATH")
     GEOS_LIBRARY_PATH = config("GEOS_LIBRARY_PATH")
@@ -210,7 +264,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     STATIC_URL = COMPRESS_URL = "/static/"
     STATIC_ROOT = COMPRESS_ROOT = f"{BASE_DIR}/infinity/static/"
 
-    # Multi deploy platform support
+    # Multi platform deploy support
     OTHER_STATIC_ROOTS = [
         f"{PROJECT_ROOT}/static/",
         f"infinity/{BASE_DIR}/static/",
@@ -231,6 +285,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     INTERNAL_IPS = ["127.0.0.1"]
 
+    # Debug Toolbar Setup
     DEBUG_TOOLBAR_PANELS = [
         "debug_toolbar.panels.versions.VersionsPanel",
         "debug_toolbar.panels.timer.TimerPanel",
