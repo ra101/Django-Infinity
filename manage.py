@@ -8,10 +8,10 @@ import dotenv
 
 
 EMOJI_SETTING_MAP = {
+    "💀": "essentials",
     "⚙️": "development",
     "🔬": "test",
-    "📦": "staging",
-    "🎁": "production",
+    "📦": "production",
     "♾️": "infinity",
 }
 

@@ -19,7 +19,8 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = config("SECRET_KEY")
-
+    DEBUG = config("DEBUG", cast=bool, default=True)
+    # SHOW_TOOLBAR_CALLBACK = lambda _: DEBUG
     PROJECT_VERSION = __version__
 
     ALLOWED_HOSTS = ["*"]
@@ -32,9 +33,9 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # pre-processing Apps
     PRE_PROCESSING_APPS = [
         "django_tenants",
-        "whitenoise.runserver_nostatic",
-        "adminactions",
-        "libs.infinite_admin",
+        # "whitenoise.runserver_nostatic",
+        # "adminactions",
+        # "libs.infinite_admin",
     ]
 
     # Core Django Application
@@ -48,42 +49,70 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
         "django.contrib.gis",
     ]
 
-    # 3rd Party Apps
-    EXTENSION_APPS = [
+    # 3rd Party Apps (Shared Schema for each Tenant)
+    SHARED_EXTENSION_APPS = [
         "rest_framework",
+        "graphene_django",
+        # "admin_honeypot",
+        # "captcha",
+        # "django_secure_password_input",
+        # "compressor",
+        # "drf_yasg",
+        # "debug_toolbar",
+    ]
+
+    # 3rd Party Apps (Separate Schema for each Tenant)
+    EXTENSION_APPS = [
         "constance",
         "constance.backends.database",
         "django_celery_beat",
-        "django_celery_results",
+        # "django_celery_results",
         "channels",
-        "graphene_django",
         "rest_framework_simplejwt",
-        "admin_honeypot",
-        "captcha",
-        "defender",
-        "django_secure_password_input",
-        "compressor",
-        "debug_toolbar",
+        # "defender",
     ]
 
-    LOCAL_APPS = [
+    # Local Apps are generally tenant specific but,
+    # We don't care for these being tenant specific,
+    # Since it is a mock project.
+    SHARED_LOCAL_APPS = [
         "apps.base",
         "apps.infinite_redis",
-        "apps.infinite_psql",
+        "apps.infinite_psql"
     ]
 
-    TENANT1_APPS, TENANT2_APPS = ["apps.tenants.tenant1"], ["apps.tenants.tenant2"]
+    PUBLIC_APPS = (
+        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS \
+            + EXTENSION_APPS + SHARED_LOCAL_APPS
+    )
 
-    SHARED_APPS = PRE_PROCESSING_APPS + DJANGO_APPS + EXTENSION_APPS + LOCAL_APPS
+    TENANT1_APPS = [
+        "apps.tenants",
+        "apps.tenants.tenant1",
+    ] + EXTENSION_APPS
 
+    TENANT2_APPS = [
+        "apps.tenants",
+        "apps.tenants.tenant2",
+    ] + EXTENSION_APPS
+
+    # Reequired by django-tenants
     TENANT_TYPES = {
-        "public": {"APPS": SHARED_APPS, "URLCONF": "infinity.urls"},
-        "tenant1": {"APPS": TENANT1_APPS, "URLCONF": "infinity.urls"},
-        "tenant2": {"APPS": TENANT2_APPS, "URLCONF": "infinity.urls"},
+        "public": {
+            "APPS": PUBLIC_APPS, "URLCONF": "infinity.urls"
+        },
+        config('TENANT1_NAME', default='tenant1'): {
+            "APPS": TENANT1_APPS, "URLCONF": "infinity.urls"
+        },
+        config('TENANT2_NAME', default='tenant2'): {
+            "APPS": TENANT2_APPS, "URLCONF": "infinity.urls"
+        },
     }
 
-    INSTALLED_APPS = SHARED_APPS + TENANT1_APPS + TENANT2_APPS
-
+    # list(dict.fromkeys(<list>)) mantains uniqueness and ordering.
+    INSTALLED_APPS = list(dict.fromkeys(
+        PUBLIC_APPS + TENANT1_APPS + TENANT2_APPS
+    ))
 
     MIDDLEWARE = [
 
@@ -94,9 +123,9 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
         # Security for request/response cycle.
         "django.middleware.security.SecurityMiddleware",
 
-        # WhiteNoise Middleware is above all other than security, so that
-        # each request will associated the required template.
-        "libs.staticfiles.middleware.ExtendedWhiteNoiseMiddleware",
+        # # WhiteNoise Middleware is above all other than security, so that
+        # # each request will associated the required template.
+        # "libs.staticfiles.middleware.ExtendedWhiteNoiseMiddleware",
 
         # Enables session support (add `session` attribute in <request>).
         "django.contrib.sessions.middleware.SessionMiddleware",
@@ -108,15 +137,15 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
         # to POST forms and checking requests for the correct value.
         "django.middleware.csrf.CsrfViewMiddleware",
 
-        # Adds Debug Toolbar on response for requests mades and
-        # It is above auth middleware, for bypassing authentication.
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        # # Adds Debug Toolbar on response for requests mades and
+        # # It is above auth middleware, for bypassing authentication.
+        # "debug_toolbar.middleware.DebugToolbarMiddleware",
 
         # Enables user support (add `user` attribute in <request>).
         "django.contrib.auth.middleware.AuthenticationMiddleware",
 
-        # Records Failed login attempts for blacklisting.
-        "defender.middleware.FailedLoginMiddleware",
+        # # Records Failed login attempts for blacklisting.
+        # "defender.middleware.FailedLoginMiddleware",
 
         # Enables cookie- and session-based message support.
         "django.contrib.messages.middleware.MessageMiddleware",
@@ -126,7 +155,6 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     ]
 
     ROOT_URLCONF = "infinity.urls"
-    PUBLIC_SCHEMA_URLCONF = 'infinity.urls'
 
     TEMPLATES = [
         {
@@ -262,17 +290,17 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # http://whitenoise.evans.io/en/stable/
 
     STATIC_URL = COMPRESS_URL = "/static/"
-    STATIC_ROOT = COMPRESS_ROOT = f"{BASE_DIR}/infinity/static/"
+    # STATIC_ROOT = COMPRESS_ROOT = f"{BASE_DIR}/infinity/static/"
 
-    # Multi platform deploy support
-    OTHER_STATIC_ROOTS = [
-        f"{PROJECT_ROOT}/static/",
-        f"infinity/{BASE_DIR}/static/",
-    ]
-    STATICFILES_STORAGE = COMPRESS_STORAGE = str(
-        "libs.staticfiles.storage.ExtendedWhiteNoiseStorage"
-    )
-    WHITENOISE_MANIFEST_STRICT = False
+    # # Multi platform deploy support
+    # OTHER_STATIC_ROOTS = [
+    #     f"{PROJECT_ROOT}/static/",
+    #     f"infinity/{BASE_DIR}/static/",
+    # ]
+    # STATICFILES_STORAGE = COMPRESS_STORAGE = str(
+    #     "libs.staticfiles.storage.ExtendedWhiteNoiseStorage"
+    # )
+    # WHITENOISE_MANIFEST_STRICT = False
 
     # Default primary key field type
     # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -285,22 +313,22 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     INTERNAL_IPS = ["127.0.0.1"]
 
-    # Debug Toolbar Setup
-    DEBUG_TOOLBAR_PANELS = [
-        "debug_toolbar.panels.versions.VersionsPanel",
-        "debug_toolbar.panels.timer.TimerPanel",
-        "debug_toolbar.panels.settings.SettingsPanel",
-        "debug_toolbar.panels.headers.HeadersPanel",
-        "debug_toolbar.panels.request.RequestPanel",
-        "debug_toolbar.panels.sql.SQLPanel",
-        "debug_toolbar.panels.staticfiles.StaticFilesPanel",
-        "debug_toolbar.panels.templates.TemplatesPanel",
-        "debug_toolbar.panels.cache.CachePanel",
-        "debug_toolbar.panels.signals.SignalsPanel",
-        "debug_toolbar.panels.logging.LoggingPanel",
-        "debug_toolbar.panels.redirects.RedirectsPanel",
-    ]
+    # # Debug Toolbar Setup
+    # DEBUG_TOOLBAR_PANELS = [
+    #     "debug_toolbar.panels.versions.VersionsPanel",
+    #     "debug_toolbar.panels.timer.TimerPanel",
+    #     "debug_toolbar.panels.settings.SettingsPanel",
+    #     "debug_toolbar.panels.headers.HeadersPanel",
+    #     "debug_toolbar.panels.request.RequestPanel",
+    #     "debug_toolbar.panels.sql.SQLPanel",
+    #     "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+    #     "debug_toolbar.panels.templates.TemplatesPanel",
+    #     "debug_toolbar.panels.cache.CachePanel",
+    #     "debug_toolbar.panels.signals.SignalsPanel",
+    #     "debug_toolbar.panels.logging.LoggingPanel",
+    #     "debug_toolbar.panels.redirects.RedirectsPanel",
+    # ]
 
-    DEBUG_TOOLBAR_CONFIG = {
-        "INTERCEPT_REDIRECTS": False,
-    }
+    # DEBUG_TOOLBAR_CONFIG = {
+    #     "INTERCEPT_REDIRECTS": False,
+    # }
