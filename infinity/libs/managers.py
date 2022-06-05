@@ -2,6 +2,7 @@ from django.contrib.gis.db.models import Manager
 from timescale.db.models.managers import TimescaleManager
 
 from .querysets import GhostQuerySet
+from timescale.db.models.querysets import TimescaleQuerySet
 
 
 class GhostManager(Manager):
@@ -41,4 +42,8 @@ class InfiniteManager(GhostManager, TimeScaleManager):
     Manager for InfiniteModel
     """
 
-    pass
+    def get_queryset(self):
+        """
+        Get all `non-ghosted` objects, time based objects
+        """
+        return TimescaleQuerySet(self.model, using=self._db).filter(alive=True)

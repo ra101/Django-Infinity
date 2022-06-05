@@ -15,6 +15,7 @@ class TimeStampModel(models.Model):
     created_on = TimescaleDateTimeField(auto_now_add=True, interval="1 day")
     updated_on = TimescaleDateTimeField(auto_now=True, interval="1 day")
 
+    objects = models.Manager()
     timescale = managers.TimeScaleManager()
 
     class Meta:
