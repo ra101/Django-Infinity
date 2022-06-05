@@ -1,11 +1,9 @@
-from django.db.models import JSONField
-
-from libs.models import GhostModel
+from django.db import models
 
 
-class ExampleForTenant1(GhostModel):
+class ExampleForTenant1(models.Model):
     """
     Abstract model to maintain architecture of DRF
     """
 
-    data = JSONField(default=dict)
+    data = models.JSONField(default=dict)
