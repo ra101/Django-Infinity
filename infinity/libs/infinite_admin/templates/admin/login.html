@@ -1,5 +1,5 @@
 {% extends "admin/login.html" %}
-{% load i18n static %}
+{% load i18n static template_utils %}
 {% block extrastyle %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static "infinite_admin/css/login.css" %}" />
@@ -76,7 +76,14 @@
     </form>
     </div>
 
-    <a class="sponser" target="_blank" href="https://www.buymeacoffee.com/ra101">Sponser</a>
+    <br>
+    <br>
+    <div class="tenant-nav content-nav">
+        <a href="{{request|create_public_url}}">Public</a>
+        <a href="{{request|create_tenant1_url}}">Tenant 1</a>
+        <a href="{{request|create_tenant2_url}}">Tenant 2</a>
+    </div>
 
+    <a class="sponser" target="_blank" href="https://www.buymeacoffee.com/ra101">Sponser</a>
 
 {% endblock %}

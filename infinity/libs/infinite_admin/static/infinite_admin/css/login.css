@@ -3,16 +3,21 @@
     --secondary: #104e36;
 }
 
+.login #container {
+    top: -5rem;
+}
+
 .captcha-input {
     height: 3em;
 }
-.captcha-input .captcha{
+
+.captcha-input .captcha {
     float: right;
     width: 25%;
     height: 30px;
 }
 
-.captcha-input input[type=text]{
+.captcha-input input[type=text] {
     clear: both;
     padding: 8px;
     width: 70%;
@@ -20,6 +25,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
 body.login {
     width: 100%;
     height: auto;
@@ -47,7 +53,7 @@ body.login {
 }
 
 .content-nav a {
-    color:white;
+    color: white;
     background: var(--secondary);
     padding: 5px;
     flex: 1 1 auto;
@@ -59,10 +65,13 @@ body.login {
 }
 
 .content-nav a:hover {
-    background-color:var(--link-fg);
+    background-color: var(--link-fg);
 }
 
-ul.errorlist{background: none;}
+ul.errorlist {
+    background: none;
+}
+
 ul.errorlist li:first-child {
     margin: 0 0 20px;
     padding: 8px 12px;
@@ -74,12 +83,12 @@ ul.errorlist li:first-child {
     background-color: var(--body-bg);
     overflow-wrap: break-word;
     line-height: 140%;
-    font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
 }
 
 
 .branding-flex-container {
-    width:100%;
+    width: 100%;
 }
 
 
@@ -89,7 +98,7 @@ a.sponser {
     bottom: 2%;
     right: 2%;
     padding: 5px;
-    border-radius:5px;
+    border-radius: 5px;
     color: white;
     background: coral;
     font-weight: bolder;
@@ -103,7 +112,12 @@ a.sponser:hover::before {
     content: "💖 ";
 }
 
-a.sponser:hover{
+a.sponser:hover {
     background: white;
     color: coral;
+}
+
+
+.login .submit-row {
+    margin-bottom: 1em;
 }
