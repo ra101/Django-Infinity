@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.db import models
 
 
@@ -7,3 +8,10 @@ class ExampleForTenant2(models.Model):
     """
 
     data = models.JSONField(default=dict)
+
+    class Meta:
+        """
+        Meta for ExampleForTenant2
+        """
+
+        verbose_name_plural = verbose_name = 'Example Model for Tenant 2'
