@@ -1,4 +1,4 @@
 -r essentials.txt
 -r development.txt
--r testing.txt
+-r test.txt
 -r production.txt

@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
     def get_signal_dict(self):
         return {
-            pre_save: {immutablize_model: [models.User, models.Group, models.Permission]}
+            pre_save: {immutablize_model: [models.User]}
         }
 
     def tuncate_auth_models(self):

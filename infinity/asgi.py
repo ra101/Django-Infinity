@@ -9,8 +9,19 @@ from .urls import socket_urls
 
 dotenv.load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "infinity.settings")
+
+EMOJI_SETTING_MAP = {
+    "💀": "essentials",
+    "⚙️": "development",
+    "🔬": "test",
+    "📦": "production",
+    "♾️": "infinity",
+}
+
+setup_type = EMOJI_SETTING_MAP.get(os.getenv("SETTINGS"), 'essentials')
+
 os.environ.setdefault("DJANGO_CONFIGURATION", "Settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"infinity.settings.{setup_type}")
 
 from configurations.asgi import get_asgi_application
 

@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.urls import include, path
 from django.contrib import admin
 
-from rest_framework import permissions
+from .libs import permissions
 from rest_framework_simplejwt import views as jwt_views
 
 from .constants import ProjectDetails
@@ -47,7 +47,7 @@ if 'drf_yasg' in settings.INSTALLED_APPS:
             ),
         ),
         public=ProjectDetails.IS_PUBLIC,
-        permission_classes=(permissions.AllowAny,),
+        permission_classes=(permissions.IsSuperUserOrReadOnly,),
     )
 
     urlpatterns.extend([

@@ -1,4 +1,4 @@
-"""Command for creating super-user and guest-user"""
+"""Command for creating public and private tenants"""
 from decouple import config
 from django.db.transaction import atomic
 from apps.base import models
@@ -17,8 +17,6 @@ class Command(BaseCommand):
         - Create a SuperUser and GuestUser with ReadOnly Ablities
         - GuestUser: user/pass :: admin/admin
         """
-
-        # with disable_signals(self.get_signal_dict()):
 
         self.tuncate_tenant_models()
 
