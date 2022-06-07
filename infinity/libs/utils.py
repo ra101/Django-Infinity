@@ -11,7 +11,7 @@ class disable_signals:
     def __init__(self, signal_dict):
         """
         signle_dict example: {
-            post_save: {eceiver_function_1: [sender_1, sender_2, ...], ...},
+            post_save: {receiver_function_1: [sender_1, sender_2, ...], ...},
             ...
         }
         """

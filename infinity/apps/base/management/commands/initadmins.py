@@ -49,6 +49,7 @@ class Command(BaseCommand):
         return models.User.objects.create_superuser(
             username=config("SU_USERNAME"),
             password=config("SU_PASSWORD"),
+            email=config("SU_EMAIL"),
         )
 
     def create_guest_user(self):
@@ -58,7 +59,8 @@ class Command(BaseCommand):
         """
 
         guest_user = models.User.objects.create_user(
-            username="admin", password="admin", is_staff=True
+            username="admin", password="admin", is_staff=True,
+            email="ping@ra101.dev",
         )
         guest_user.groups.add(self.create_guest_group())
         guest_user.save()

@@ -39,3 +39,10 @@ pyparsing==2.4.7
 ruamel.yaml==0.17.14
 ruamel.yaml.clib==0.2.6
 uritemplate==3.0.1
+
+# Django-Extensions
+django-extensions==3.1.5
+Werkzeug==2.0.3
+vobject==0.9.6.1
+pyparsing==2.4.7
+pydot==1.4.2

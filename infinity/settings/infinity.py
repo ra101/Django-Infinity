@@ -30,6 +30,7 @@ class Settings(EssentialSettings):
         "captcha",
         "django_secure_password_input",
         "compressor",
+        "django_extensions",
         "drf_yasg",
         "debug_toolbar",
     ]
