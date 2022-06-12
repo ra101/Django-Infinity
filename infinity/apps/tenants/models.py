@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class ExampleForTenantShared(models.Model):
+class ModelForTenantShared(models.Model):
     """
     Abstract model to maintain architecture of DRF
     """

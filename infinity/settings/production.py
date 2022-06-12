@@ -75,10 +75,10 @@ class Settings(EssentialSettings):
             "APPS": PUBLIC_APPS, "URLCONF": "infinity.urls"
         },
         config('TENANT1_NAME', default='tenant1'): {
-            "APPS": TENANT1_APPS, "URLCONF": "infinity.urls"
+            "APPS": TENANT1_APPS, "URLCONF": "infinity.tenant1_urls"
         },
         config('TENANT2_NAME', default='tenant2'): {
-            "APPS": TENANT2_APPS, "URLCONF": "infinity.urls"
+            "APPS": TENANT2_APPS, "URLCONF": "infinity.tenant2_urls"
         },
     }
 

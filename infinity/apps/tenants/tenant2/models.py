@@ -1,8 +1,7 @@
-from tabnanny import verbose
 from django.db import models
 
 
-class ExampleForTenant2(models.Model):
+class ModelForTenant2(models.Model):
     """
     Abstract model to maintain architecture of DRF
     """

@@ -3,4 +3,4 @@ from django.contrib import admin
 from . import models
 
 
-admin.site.register(models.ExampleForTenant1, admin.ModelAdmin)
+admin.site.register(models.ModelForTenant1, admin.ModelAdmin)

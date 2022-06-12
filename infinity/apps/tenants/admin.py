@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . import models
+from .models import ModelForTenantShared
 
 
-admin.site.register(models.ExampleForTenantShared, admin.ModelAdmin)
+admin.site.register(ModelForTenantShared, admin.ModelAdmin)
