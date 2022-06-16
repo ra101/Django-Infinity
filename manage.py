@@ -21,7 +21,7 @@ def main():
     arguments = sys.argv
     setup_type = EMOJI_SETTING_MAP.get(os.getenv("SETTINGS"), 'essentials')
 
-    ###### Dumb Stuff - Start
+    # !Dumb Stuff - Start
 
     if "installrequirements" in arguments:
         subprocess.call([
@@ -30,7 +30,7 @@ def main():
         ])
         return
 
-    ####### Dumb Stuff - Stop
+    # !Dumb Stuff - Stop
 
     os.environ.setdefault('DJANGO_CONFIGURATION', 'Settings')
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"infinity.settings.{setup_type}")

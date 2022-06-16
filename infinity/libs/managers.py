@@ -1,49 +1,61 @@
-from django.contrib.gis.db.models import Manager
+from polymorphic.managers import PolymorphicManager
+from psqlextra.manager import PostgresManager as PSQLExtraManager
 from timescale.db.models.managers import TimescaleManager
 
-from .querysets import GhostQuerySet
-from timescale.db.models.querysets import TimescaleQuerySet
+from . import querysets as qs
 
 
-class GhostManager(Manager):
+class SoftDeleteManager(PSQLExtraManager):
     """
-    Manager for GhostModel
+    Manager for SoftDeleteModel
     """
 
     def get_queryset(self):
         """
-        Get all `non-ghosted` objects.
+        Get all `hard-deleted` objects.
         """
-        return GhostQuerySet(self.model, using=self._db).filter(alive=True)
+        return qs.SoftDeleteQuerySet(self.model, using=self._db).filter(is_deleted=True)
 
-    def annihilate(self):
+    def hard_delete(self):
         """
         Permanently delete all the objects.
         """
-        return GhostQuerySet(self.model, using=self._db).annihilate()
+        return qs.SoftDeleteQuerySet(self.model, using=self._db).hard_delete()
 
-    def resurrect(self):
+    def restore(self):
         """
-        Restore all the `ghost`-ed objects.
+        Restore all the `soft-delete`-ed objects.
         """
-        return GhostQuerySet(self.model, using=self._db).resurrect()
+        return qs.SoftDeleteQuerySet(self.model, using=self._db).restore()
 
 
-class TimeScaleManager(TimescaleManager):
+class TimeScaleManager(TimescaleManager, PSQLExtraManager):
+    queryset_class = qs.TimeScaleQuerySet
+
+    def get_queryset(self):
+        return qs.TimeScaleQuerySet(self.model, using=self._db)
+
+
+class PolymorphicExtraManager(PolymorphicManager, PSQLExtraManager):
+
+    queryset_class = qs.PolymorphicExtraQuerySet
+
+
+class InfiniteManager(TimeScaleManager, PolymorphicExtraManager):
     """
-    Renaming it, 'cuz ... I want too :p
+    all-object Manager for InfiniteModel
     """
+    queryset_class = qs.TruelyInfiniteQuerySet
 
-    pass
 
-
-class InfiniteManager(GhostManager, TimeScaleManager):
+class SoftDeleteInfiniteManager(InfiniteManager, SoftDeleteManager):
     """
     Manager for InfiniteModel
     """
+    queryset_class = qs.InfiniteQuerySet
 
     def get_queryset(self):
         """
-        Get all `non-ghosted` objects, time based objects
+        Get all `hard-deleted` objects, time based objects
         """
-        return TimescaleQuerySet(self.model, using=self._db).filter(alive=True)
+        return self.queryset_class(self.model, using=self._db).filter(is_deleted=True)

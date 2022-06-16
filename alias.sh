@@ -3,6 +3,7 @@ alias pir='pip install -r requirements.txt'
 
 ## Django Aliases
 dj() { command python manage.py $*;}
+alias redis_board='python redis_board.py'
 alias djt='python manage.py test'
 alias djr='python manage.py runserver'
 alias djs='python manage.py shell'

@@ -30,7 +30,7 @@ class RedisIterable(query.BaseIterable):
             result[key] = redis_instance.get(key)
 
         # low_mark and high_mark are the indexs of queryset
-        for key, value in list(result.items())[query.low_mark : query.high_mark]:
+        for key, value in list(result.items())[query.low_mark: query.high_mark]:
             yield model(key=key, value=value)
 
 

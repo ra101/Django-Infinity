@@ -18,7 +18,6 @@ Why does this file exist, and why not put this in __main__?
 import os
 
 
-
 os.environ.setdefault('DJANGO_CONFIGURATION', 'Settings')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "infinity.settings.redis_board")
 
@@ -34,7 +33,6 @@ def main():
     django.setup()
 
     from redisboard.models import RedisServer
-
     RedisServer.objects.get_or_create(label="main", url=settings.REDIS_URL)
 
     redis_board_domain = config('REDIS_BOARD_DOMAIN_URL', default='localhost:6479')

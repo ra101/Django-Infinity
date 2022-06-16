@@ -53,6 +53,8 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     SHARED_EXTENSION_APPS = [
         "rest_framework",
         "graphene_django",
+        "psqlextra",
+        "simple_history",
         "redisboard",
         # "admin_honeypot",
         # "captcha",
@@ -84,8 +86,8 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     ]
 
     PUBLIC_APPS = (
-        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS \
-            + EXTENSION_APPS + SHARED_LOCAL_APPS
+        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS
+        + EXTENSION_APPS + SHARED_LOCAL_APPS
     )
 
     TENANT1_APPS = [
@@ -154,6 +156,9 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
         # Simple clickjacking protection via the X-Frame-Options header.
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+        # Expose request to HistoricalRecords.
+        "simple_history.middleware.HistoryRequestMiddleware",
     ]
 
     ROOT_URLCONF = "infinity.urls"
@@ -241,11 +246,15 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
                 + f":{config('PQSL_PORT', cast=int, default=5432)}"
                 + f"/{config('PSQL_NAME', default=PSQL_DEFAULT)}"
             ),
-        )
+        ),
+        "ignore-this": {"ENGINE": "psqlextra.backend"}
     }
 
     # `django_tenants.postgresql_backend` is inherited by `ORIGINAL_BACKEND`
-    ORIGINAL_BACKEND = "timescale.db.backends.postgis"
+    ORIGINAL_BACKEND = "psqlextra.backend"
+
+    # `psqlextra.backend` is inherited by `POSTGRES_EXTRA_DB_BACKEND_BASE`
+    POSTGRES_EXTRA_DB_BACKEND_BASE = "timescale.db.backends.postgis"
 
     DATABASE_ROUTERS = [
         'django_tenants.routers.TenantSyncRouter',
@@ -312,8 +321,6 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-APPEND_SLASH
 
     APPEND_SLASH = True
-
-    INTERNAL_IPS = ["127.0.0.1"]
 
     # # Debug Toolbar Setup
     # DEBUG_TOOLBAR_PANELS = [

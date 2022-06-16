@@ -1,0 +1,14 @@
+[flake8]
+exclude =
+    .git,
+    .gitignore,
+    *.pot,
+    *.py[co],
+    __pycache__,
+    venv,
+    .env
+    */migrations/*
+
+max-line-length = 88
+select = C, E, F, W, B, B950, DJ
+ignore = DJ10, DJ11, W503

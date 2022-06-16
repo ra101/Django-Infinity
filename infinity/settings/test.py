@@ -3,7 +3,6 @@ from decouple import config
 from .essentials import Settings as EssentialSettings
 
 
-
 class Settings(EssentialSettings):
     PROJECT_ROOT = EssentialSettings.PROJECT_ROOT
     BASE_DIR = EssentialSettings.BASE_DIR
@@ -37,8 +36,8 @@ class Settings(EssentialSettings):
     SHARED_LOCAL_APPS = EssentialSettings.SHARED_LOCAL_APPS
 
     PUBLIC_APPS = (
-        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS \
-            + EXTENSION_APPS + SHARED_LOCAL_APPS
+        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS
+        + EXTENSION_APPS + SHARED_LOCAL_APPS
     )
 
     TENANT1_APPS = [
@@ -107,6 +106,9 @@ class Settings(EssentialSettings):
 
         # Simple clickjacking protection via the X-Frame-Options header.
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+        # Expose request to HistoricalRecords.
+        "simple_history.middleware.HistoryRequestMiddleware",
     ]
 
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}

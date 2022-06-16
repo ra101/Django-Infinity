@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
         return models.Domain.objects.create(
             domain=f"{tenant_name}.{self.domain}",
-            tenant=tenant_domain, is_primary = False
+            tenant=tenant_domain, is_primary=False
         )
 
     def create_public_domain(self):
@@ -51,5 +51,5 @@ class Command(BaseCommand):
         public_tenant = models.Tenant.objects.create(schema_name='public')
 
         return models.Domain.objects.create(
-            domain=self.domain, tenant=public_tenant, is_primary = True
+            domain=self.domain, tenant=public_tenant, is_primary=True
         )
