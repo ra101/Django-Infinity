@@ -9,3 +9,5 @@ alias djs='python manage.py shell'
 alias djmm='python manage.py makemigrations'
 alias djm='python manage.py migrate'
 alias djcs='python manage.py collectstatic --noinput --clear'
+run_beat() { command celery -A infinity beat -l info $*}
+run_celery() { command celery -A infinity worker -Q default_queue -P gevent -l info $*}

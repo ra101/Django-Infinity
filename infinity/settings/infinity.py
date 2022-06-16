@@ -26,6 +26,7 @@ class Settings(EssentialSettings):
     SHARED_EXTENSION_APPS = [
         "rest_framework",
         "graphene_django",
+        "redisboard",
         "admin_honeypot",
         "captcha",
         "django_secure_password_input",
