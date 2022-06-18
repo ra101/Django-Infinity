@@ -36,8 +36,11 @@ class Settings(EssentialSettings):
     SHARED_LOCAL_APPS = EssentialSettings.SHARED_LOCAL_APPS
 
     PUBLIC_APPS = (
-        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS
-        + EXTENSION_APPS + SHARED_LOCAL_APPS
+        PRE_PROCESSING_APPS
+        + DJANGO_APPS
+        + SHARED_EXTENSION_APPS
+        + EXTENSION_APPS
+        + SHARED_LOCAL_APPS
     )
 
     TENANT1_APPS = [
@@ -52,61 +55,47 @@ class Settings(EssentialSettings):
 
     # Reequired by django-tenants
     TENANT_TYPES = {
-        "public": {
-            "APPS": PUBLIC_APPS, "URLCONF": "infinity.urls"
+        "public": {"APPS": PUBLIC_APPS, "URLCONF": EssentialSettings.ROOT_URLCONF},
+        config("TENANT1_NAME", default="tenant1"): {
+            "APPS": TENANT1_APPS,
+            "URLCONF": "infinity.tenant1_urls",
         },
-        config('TENANT1_NAME', default='tenant1'): {
-            "APPS": TENANT1_APPS, "URLCONF": "infinity.tenant1_urls"
-        },
-        config('TENANT2_NAME', default='tenant2'): {
-            "APPS": TENANT2_APPS, "URLCONF": "infinity.tenant2_urls"
+        config("TENANT2_NAME", default="tenant2"): {
+            "APPS": TENANT2_APPS,
+            "URLCONF": "infinity.tenant2_urls",
         },
     }
 
     # list(dict.fromkeys(<list>)) mantains uniqueness and ordering.
-    INSTALLED_APPS = list(dict.fromkeys(
-        PUBLIC_APPS + TENANT1_APPS + TENANT2_APPS
-    ))
+    INSTALLED_APPS = list(dict.fromkeys(PUBLIC_APPS + TENANT1_APPS + TENANT2_APPS))
 
     MIDDLEWARE = [
-
         # Tenant Middleware is above all, so that each request
         # can be set to use the correct schema.
         "django_tenants.middleware.main.TenantMainMiddleware",
-
         # Security for request/response cycle.
         "django.middleware.security.SecurityMiddleware",
-
         # # WhiteNoise Middleware is above all other than security, so that
         # # each request will associated the required template.
         # "libs.staticfiles.middleware.ExtendedWhiteNoiseMiddleware",
-
         # Enables session support (add `session` attribute in <request>).
         "django.contrib.sessions.middleware.SessionMiddleware",
-
         # Adds utilities for taking care of basic operations.
         "django.middleware.common.CommonMiddleware",
-
         # Adds protection against CSRF by adding hidden form fields
         # to POST forms and checking requests for the correct value.
         "django.middleware.csrf.CsrfViewMiddleware",
-
         # # Adds Debug Toolbar on response for requests mades and
         # # It is above auth middleware, for bypassing authentication.
         # "debug_toolbar.middleware.DebugToolbarMiddleware",
-
         # Enables user support (add `user` attribute in <request>).
         "django.contrib.auth.middleware.AuthenticationMiddleware",
-
         # # Records Failed login attempts for blacklisting.
         # "defender.middleware.FailedLoginMiddleware",
-
         # Enables cookie- and session-based message support.
         "django.contrib.messages.middleware.MessageMiddleware",
-
         # Simple clickjacking protection via the X-Frame-Options header.
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
         # Expose request to HistoricalRecords.
         "simple_history.middleware.HistoryRequestMiddleware",
     ]

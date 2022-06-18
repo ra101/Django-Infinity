@@ -19,20 +19,26 @@ EMOJI_SETTING_MAP = {
 def main():
     dotenv.load_dotenv(encoding="utf-8")
     arguments = sys.argv
-    setup_type = EMOJI_SETTING_MAP.get(os.getenv("SETTINGS"), 'essentials')
+    setup_type = EMOJI_SETTING_MAP.get(os.getenv("SETTINGS"), "essentials")
 
     # !Dumb Stuff - Start
 
     if "installrequirements" in arguments:
-        subprocess.call([
-            sys.executable, "-m", "pip", "install",
-            "-r", f"requirements/{setup_type}.txt",
-        ])
+        subprocess.call(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "-r",
+                f"requirements/{setup_type}.txt",
+            ]
+        )
         return
 
     # !Dumb Stuff - Stop
 
-    os.environ.setdefault('DJANGO_CONFIGURATION', 'Settings')
+    os.environ.setdefault("DJANGO_CONFIGURATION", "Settings")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"infinity.settings.{setup_type}")
 
     try:

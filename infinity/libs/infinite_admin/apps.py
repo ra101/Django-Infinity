@@ -11,6 +11,7 @@ class InfiniteAdminLoginConfig(AppConfig):
 
     def replace_admin_login_form(self):
         from django.contrib import admin
+        from django.conf import settings
         from django.contrib.admin.forms import AdminAuthenticationForm
 
         from adminactions import actions

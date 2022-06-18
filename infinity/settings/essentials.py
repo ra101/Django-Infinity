@@ -28,7 +28,9 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     ASGI_APPLICATION = "infinity.asgi.application"
 
     HAS_MULTI_TYPE_TENANTS = True
-    MULTI_TYPE_DATABASE_FIELD = 'schema_name'
+    MULTI_TYPE_DATABASE_FIELD = "schema_name"
+
+    ROOT_URLCONF = "infinity.urls"
 
     # pre-processing Apps
     PRE_PROCESSING_APPS = [
@@ -79,15 +81,14 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # Local Apps are generally tenant specific but,
     # We don't care for these being tenant specific,
     # Since it is a mock project.
-    SHARED_LOCAL_APPS = [
-        "apps.base",
-        "apps.infinite_redis",
-        "apps.infinite_psql"
-    ]
+    SHARED_LOCAL_APPS = ["apps.base", "apps.infinite_redis", "apps.infinite_psql"]
 
     PUBLIC_APPS = (
-        PRE_PROCESSING_APPS + DJANGO_APPS + SHARED_EXTENSION_APPS
-        + EXTENSION_APPS + SHARED_LOCAL_APPS
+        PRE_PROCESSING_APPS
+        + DJANGO_APPS
+        + SHARED_EXTENSION_APPS
+        + EXTENSION_APPS
+        + SHARED_LOCAL_APPS
     )
 
     TENANT1_APPS = [
@@ -102,66 +103,50 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     # Reequired by django-tenants
     TENANT_TYPES = {
-        "public": {
-            "APPS": PUBLIC_APPS, "URLCONF": "infinity.urls"
+        "public": {"APPS": PUBLIC_APPS, "URLCONF": ROOT_URLCONF},
+        config("TENANT1_NAME", default="tenant1"): {
+            "APPS": TENANT1_APPS,
+            "URLCONF": "infinity.tenant1_urls",
         },
-        config('TENANT1_NAME', default='tenant1'): {
-            "APPS": TENANT1_APPS, "URLCONF": "infinity.tenant1_urls"
-        },
-        config('TENANT2_NAME', default='tenant2'): {
-            "APPS": TENANT2_APPS, "URLCONF": "infinity.tenant2_urls"
+        config("TENANT2_NAME", default="tenant2"): {
+            "APPS": TENANT2_APPS,
+            "URLCONF": "infinity.tenant2_urls",
         },
     }
 
     # list(dict.fromkeys(<list>)) mantains uniqueness and ordering.
-    INSTALLED_APPS = list(dict.fromkeys(
-        PUBLIC_APPS + TENANT1_APPS + TENANT2_APPS
-    ))
+    INSTALLED_APPS = list(dict.fromkeys(PUBLIC_APPS + TENANT1_APPS + TENANT2_APPS))
 
     MIDDLEWARE = [
-
         # Tenant Middleware is above all, so that each request
         # can be set to use the correct schema.
         "django_tenants.middleware.main.TenantMainMiddleware",
-
         # Security for request/response cycle.
         "django.middleware.security.SecurityMiddleware",
-
         # # WhiteNoise Middleware is above all other than security, so that
         # # each request will associated the required template.
         # "libs.staticfiles.middleware.ExtendedWhiteNoiseMiddleware",
-
         # Enables session support (add `session` attribute in <request>).
         "django.contrib.sessions.middleware.SessionMiddleware",
-
         # Adds utilities for taking care of basic operations.
         "django.middleware.common.CommonMiddleware",
-
         # Adds protection against CSRF by adding hidden form fields
         # to POST forms and checking requests for the correct value.
         "django.middleware.csrf.CsrfViewMiddleware",
-
         # # Adds Debug Toolbar on response for requests mades and
         # # It is above auth middleware, for bypassing authentication.
         # "debug_toolbar.middleware.DebugToolbarMiddleware",
-
         # Enables user support (add `user` attribute in <request>).
         "django.contrib.auth.middleware.AuthenticationMiddleware",
-
         # # Records Failed login attempts for blacklisting.
         # "defender.middleware.FailedLoginMiddleware",
-
         # Enables cookie- and session-based message support.
         "django.contrib.messages.middleware.MessageMiddleware",
-
         # Simple clickjacking protection via the X-Frame-Options header.
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
         # Expose request to HistoricalRecords.
         "simple_history.middleware.HistoryRequestMiddleware",
     ]
-
-    ROOT_URLCONF = "infinity.urls"
 
     TEMPLATES = [
         {
@@ -213,7 +198,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
 
     if not REDIS_URL:
         REDIS_URL = (
-            f"redis://:{config('REDIS_PASS')}"
+            f"redis://{config('REDIS_USER', '')}:{config('REDIS_PASS')}"
             + f"@{config('REDIS_HOST', default='localhost')}"
             + f":{config('REDIS_PORT', cast=int, default=6379)}"
         )
@@ -225,10 +210,11 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-            'KEY_FUNCTION': 'django_tenants.cache.make_key',
-            'REVERSE_KEY_FUNCTION': 'django_tenants.cache.reverse_key',
+            "KEY_FUNCTION": "django_tenants.cache.make_key",
+            "REVERSE_KEY_FUNCTION": "django_tenants.cache.reverse_key",
         }
     }
+    SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
     CHANNEL_LAYERS = {"default": {"CONFIG": {"hosts": [REDIS_URL]}}}
 
@@ -247,7 +233,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
                 + f"/{config('PSQL_NAME', default=PSQL_DEFAULT)}"
             ),
         ),
-        "ignore-this": {"ENGINE": "psqlextra.backend"}
+        "ignore-this": {"ENGINE": "psqlextra.backend"},
     }
 
     # `django_tenants.postgresql_backend` is inherited by `ORIGINAL_BACKEND`
@@ -257,7 +243,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     POSTGRES_EXTRA_DB_BACKEND_BASE = "timescale.db.backends.postgis"
 
     DATABASE_ROUTERS = [
-        'django_tenants.routers.TenantSyncRouter',
+        "django_tenants.routers.TenantSyncRouter",
     ]
 
     TENANT_MODEL = "base.Tenant"
@@ -341,3 +327,7 @@ class Settings(CelerySettingsMixin, LiveSettingsMixin, Configuration):
     # DEBUG_TOOLBAR_CONFIG = {
     #     "INTERCEPT_REDIRECTS": False,
     # }
+
+    # redisboard setup
+    REDISBOARD_SOCKET_CONNECT_TIMEOUT = 5
+    REDISBOARD_SOCKET_TIMEOUT = 5

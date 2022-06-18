@@ -30,9 +30,7 @@ class Command(BaseCommand):
             self.create_guest_user()
 
     def get_signal_dict(self):
-        return {
-            pre_save: {immutablize_model: [models.User]}
-        }
+        return {pre_save: {immutablize_model: [models.User]}}
 
     def tuncate_auth_models(self):
         """
@@ -59,7 +57,9 @@ class Command(BaseCommand):
         """
 
         guest_user = models.User.objects.create_user(
-            username="admin", password="admin", is_staff=True,
+            username="admin",
+            password="admin",
+            is_staff=True,
             email="ping@ra101.dev",
         )
         guest_user.groups.add(self.create_guest_group())
@@ -81,10 +81,14 @@ class Command(BaseCommand):
     def get_guests_permission_qs(self):
         """
         Creates QuerySet of Permission:
-         - that can view all data
+         - that can view, export and chart all data
          - but only change live_settings
         """
 
         return models.Permission.objects.filter(
-            Q(codename__startswith="view") | Q(content_type__model="config")
+            Q(codename__startswith="view")
+            | Q(codename__startswith="adminactions_export")
+            | Q(codename__startswith="adminactions_chart")
+            | Q(codename__startswith="can_inspect", content_type__model="redisserver")
+            | Q(content_type__model="config")
         )

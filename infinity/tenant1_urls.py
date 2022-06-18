@@ -3,7 +3,7 @@ from django.urls import include, path
 from .urls import urlpatterns
 
 
-urlpatterns.extend([
+urlpatterns = [
     path("", include("apps.tenants.urls")),
-    path("", include("apps.tenants.tenant1.urls")),
-])
+    path("", include("apps.tenants.tenant2.urls")),
+] + urlpatterns
